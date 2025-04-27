@@ -5,6 +5,7 @@ import logging
 import os
 import re
 from dotenv import load_dotenv
+
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 load_dotenv()  
@@ -64,11 +65,18 @@ def get_bot_response():
     mentor_keywords = ['mentor', 'mentorship', 'guidance']
     learn_keywords = ['course', 'learn', 'skill', 'training']
     safety_keywords = ['safe', 'safety', 'secure']
+    career_event_keywords = ['career event', 'career fair', 'job fair', 'conference', 'webinar']
 
     # Job-related query
     if match_keywords(user_input, job_keywords):
         results = get_google_results(user_input + " site:linkedin.com OR site:naukri.com OR site:internshala.com")
         response = "💼 Here are some job-related links I found:\n" + "\n".join([f"{i+1}. {link}" for i, link in enumerate(results)])
+        return response
+
+    # Career Event-related query
+    elif match_keywords(user_input, career_event_keywords):
+        results = get_google_results(user_input + " site:eventbrite.com OR site:meetup.com OR site:linkedin.com")
+        response = "🎤 Here are some upcoming career events:\n" + "\n".join([f"{i+1}. {link}" for i, link in enumerate(results)])
         return response
 
     # Mentor-related query

@@ -4,10 +4,23 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Lunaria - AI Career Assistant</title>
+  
+  <!-- Meta tags for SEO -->
+  <meta name="description" content="Lunaria - Your AI-powered Career Companion for Women. Get career advice, guidance, and support in your professional journey.">
+  <meta name="keywords" content="AI Career Assistant, Women's Careers, Career Advice, Career Support">
+  <meta property="og:title" content="Lunaria - AI Career Assistant">
+  <meta property="og:description" content="Get personalized career advice and support with Lunaria.">
+  <meta property="og:image" content="path/to/your/image.jpg">
+  <meta property="og:url" content="http://yourwebsite.com">
+
+  <!-- Link to Google Fonts for custom typography -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="static/style.css" />
+  
   <style>
     body {
-      font-family: 'Segoe UI', sans-serif;
+      font-family: 'Roboto', sans-serif;
       background: linear-gradient(to right, #fdf0f6, #ffe4ec);
       margin: 0;
       padding: 0;
@@ -140,6 +153,21 @@
       display: block;
       text-align: right;
     }
+
+    /* Spinner Styling */
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #d63384;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      animation: spin 2s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
   </style>
 </head>
 <body>
@@ -155,9 +183,10 @@
         id="msg"
         placeholder="Type your question..."
         autocomplete="off"
+        aria-label="Enter message"
         onkeydown="if(event.key === 'Enter') sendMessage();"
       />
-      <button onclick="sendMessage()">Send</button>
+      <button aria-label="Send message" onclick="sendMessage()">Send</button>
     </div>
   </div>
 
@@ -187,11 +216,11 @@
 
       const loadingDiv = document.createElement("div");
       loadingDiv.classList.add("bot-message");
-      loadingDiv.innerText = "Lunaria is thinking...";
+      loadingDiv.innerHTML = '<div class="spinner"></div>';  // Spinner added
       chatBox.appendChild(loadingDiv);
       chatBox.scrollTop = chatBox.scrollHeight;
 
-      fetch(/get?msg=${encodeURIComponent(userMessage)})
+      fetch(`/get?msg=${encodeURIComponent(userMessage)}`)
         .then(response => response.text())
         .then(data => {
           loadingDiv.remove();
@@ -203,6 +232,15 @@
           botTime.innerText = addTimestamp();
           botDiv.appendChild(botTime);
           chatBox.appendChild(botDiv);
+          chatBox.scrollTop = chatBox.scrollHeight;
+        })
+        .catch(error => {
+          console.error("Error:", error); // Error logging for debugging
+          loadingDiv.remove();
+          const errorDiv = document.createElement("div");
+          errorDiv.classList.add("bot-message");
+          errorDiv.innerText = "Oops! Something went wrong. Please try again.";
+          chatBox.appendChild(errorDiv);
           chatBox.scrollTop = chatBox.scrollHeight;
         });
     }
